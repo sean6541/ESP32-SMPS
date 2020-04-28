@@ -37,7 +37,7 @@ static int _analogRead(int pin) {
 
 static void _ledcWrite(uint8_t channel, uint32_t _duty) {
   if(invert_out) {
-    _duty = 255 - _duty;
+    _duty = 256 - _duty;
   }
   ledcWrite(channel, _duty);
 }
