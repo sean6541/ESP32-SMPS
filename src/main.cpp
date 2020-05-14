@@ -59,8 +59,8 @@ void setup() {
   analogSetAttenuation(ADC_0db);
   ledcSetup(0, freq, 8);
   ledcAttachPin(PIN_OUT, 0);
-  _ledcWrite(0, 0);
-  xTaskCreateUniversal([] (void* pvParameters) {
+  _ledcWrite(0, duty);
+  xTaskCreate([] (void* pvParameters) {
     while(true) {
       int voltage = _analogRead(PIN_V);
       int current = _analogRead(PIN_C);
@@ -72,18 +72,21 @@ void setup() {
         _ledcWrite(0, duty);
       }
     }
-  }, "pid_task", 2048, NULL, 1, NULL, 1);
+  }, "pid_task", 2048, NULL, 1, NULL);
   WiFi.mode(WIFI_AP);
   WiFi.softAP(wifi_ssid.c_str(), wifi_pass.c_str());
   server.on("/", HTTP_GET, [] (AsyncWebServerRequest *request) {
     if(request->hasParam("voltage") || request->hasParam("current")) {
+      int err_code = 200;
+      String msg = "Configuration set.";
       if(request->hasParam("voltage")) {
         int voltage = request->getParam("voltage")->value().toInt();
         if (voltage > 0 && voltage <= max_v) {
           target_v = map(voltage, 0, max_v, 0, 4095);
           prefs.putInt("target_v", target_v);
         } else {
-          request->send(400, "text/plain", "Error: Voltage " + String(voltage) + " is out of bounds (1-" + String(max_v) + " Volts)");
+          err_code = 400;
+          msg = "Error: Voltage " + String(voltage) + " is out of bounds (1-" + String(max_v) + " Volts)";
         }
       }
       if(request->hasParam("current")) {
@@ -92,10 +95,11 @@ void setup() {
           target_c = map(current, 0, max_c, 0, 4095);
           prefs.putInt("target_c", target_c);
         } else {
-          request->send(400, "text/plain", "Error: Current " + String(current) + " is out of bounds (1-" + String(max_c) + " milliAmps)");
+          err_code = 400;
+          msg = "Error: Current " + String(current) + " is out of bounds (1-" + String(max_c) + " milliAmps)";
         }
       }
-      request->send(200, "text/plain", "Configuration set.");
+      request->send(err_code, "text/plain", msg);
     } else {
       int voltage = map(_analogRead(PIN_V), 0, 4095, 0, max_v);
       int current = map(_analogRead(PIN_C), 0, 4095, 0, max_c);
