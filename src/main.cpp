@@ -96,7 +96,9 @@ void setup() {
     };
   }
   mcpwm_init(MCPWM_UNIT_0, MCPWM_TIMER_0, &mcpwm_config);
-  mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, MCPWM_DUTY_MODE_1);
+  if(!single_ended) {
+    mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, MCPWM_DUTY_MODE_1);
+  }
 
   // PID task reads voltage and current; sets duty cycle accordingly
   xTaskCreate([] (void* pvParameters) {
