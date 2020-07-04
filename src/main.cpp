@@ -63,8 +63,8 @@ void setup() {
   invert_vin = prefs.getInt("invert_vin", 0);
   invert_cin = prefs.getInt("invert_cin", 0);
   min_duty = prefs.getInt("min_duty", 0);
-  max_duty = prefs.getInt("max_duty", 0);
-  freq = prefs.getInt("freq", 0);
+  max_duty = prefs.getInt("max_duty", 256);
+  freq = prefs.getInt("freq", 1000);
   max_v = prefs.getInt("max_v", 0);
   max_c = prefs.getInt("max_c", 0);
   target_v = prefs.getInt("target_v", 0);
