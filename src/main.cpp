@@ -37,7 +37,7 @@ static int _analogRead(int pin) { // Invert ADC readings if needed
 
 static void _ledcWrite(int channel, uint32_t _duty) { // Invert duty cycle if needed
   if(invert_out) {
-    _duty = _duty - 256;
+    _duty = 256 - _duty;
   }
   ledcWrite(channel, _duty);
 }
