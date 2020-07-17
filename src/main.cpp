@@ -60,7 +60,7 @@ void setup() {
   wifi_ssid = prefs.getString("wifi_ssid", "ESP32-SMPS");
   wifi_pass = prefs.getString("wifi_pass", "password");
 
-  analogSetAttenuation(ADC_0db);
+  analogSetAttenuation(ADC_11db);
 
   // Initilize LEDC
   ledcSetup(0, freq, 8);
